@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="common">
+    <sql id="commonQuery">
+        <foreach collection="criteria" item="c">
+            <choose>
+                <when test="c.listValue">
+                    and ${c.condition}
+                    <foreach close=")" collection="c.value" item="listItem" open="(" separator=",">
+                        #{listItem}
+                    </foreach>
+                </when>
+                <when test="c.hasValue">
+                    <if test="c.value != null">
+                        and ${c.condition} #{c.value}
+                    </if>
+                </when>
+                <otherwise>
+                    and ${c.condition}
+                </otherwise>
+            </choose>
+        </foreach>
+
+    </sql>
+
+    <sql id="commonOther">
+        <if test="group != null">
+            group by ${group}
+        </if>
+        <if test="order != null">
+            order by ${order}
+        </if>
+        <if test="limit != null">
+            limit ${limit}
+        </if>
+    </sql>
+
+</mapper>

@@ -1,0 +1,14 @@
+
+server:
+  port: 8088
+
+security:
+  oauth2:
+    client:
+      client-id: client1
+      client-secret: client1secret
+      user-authorization-uri: http://127.0.0.1:8081/auth/oauth/authorize #请求认证的地址
+      access-token-uri: http://127.0.0.1:8081/auth/oauth/token #请求令牌的地址
+    resource:
+      user-info-uri: http://127.0.0.1:8081/auth/user/me
+      token-info-uri: http://127.0.0.1:8081/auth/oauth/check_token

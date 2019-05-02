@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.fran.microservice.cas.authserver.dao.mapper.AuthUserMapper">
+  <resultMap id="BaseResultMap" type="org.fran.microservice.cas.authserver.dao.po.AuthUser">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="foreign_name" jdbcType="VARCHAR" property="foreignName" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+  <resultMap id="authUserPermission" type="org.fran.microservice.cas.authserver.dao.po.AuthUser">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <collection property="authPermissionList" ofType="org.fran.microservice.cas.authserver.dao.po.AuthPermission" resultMap="authPermissionList" columnPrefix="permission_"/>
+  </resultMap>
+
+  <resultMap id="authPermissionList" type="org.fran.microservice.cas.authserver.dao.po.AuthPermission">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="parent_name" jdbcType="VARCHAR" property="parentName" />
+    <result column="show_name" jdbcType="VARCHAR" property="showName" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="display" jdbcType="INTEGER" property="display" />
+    <result column="is_permission" jdbcType="INTEGER" property="isPermission" />
+    <result column="sort_order" jdbcType="INTEGER" property="sortOrder" />
+  </resultMap>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from auth_user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.fran.microservice.cas.authserver.dao.po.AuthUser">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into auth_user (name, account, foreign_name, email,
+      phone, password, status, 
+      create_time)
+    values (#{name,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{foreignName,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+      #{phone,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.fran.microservice.cas.authserver.dao.po.AuthUser">
+    update auth_user
+    set name = #{name,jdbcType=VARCHAR},
+      account = #{account,jdbcType=VARCHAR},
+      foreign_name = #{foreignName,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, name, account, foreign_name, email, phone, password, status, create_time
+    from auth_user
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, name, account, foreign_name, email, phone, password, status, create_time
+    from auth_user
+  </select>
+
+  <select id="selectByConditions" resultMap="BaseResultMap">
+    select n.id, n.name, n.account, n.foreign_name, n.email, n.phone, n.password, n.status, n.create_time
+    from auth_user n
+    <where>
+      <include refid="common.commonQuery"/>
+    </where>
+    <include refid="common.commonOther"/>
+  </select>
+
+  <select id="countByConditions" resultType="java.lang.Long">
+    select count(1)
+    from auth_user n
+    <where>
+      <include refid="common.commonQuery"/>
+    </where>
+  </select>
+
+  <select id="selectUserPermission" parameterType="java.lang.String" resultMap="authUserPermission">
+    select u.id, u.name, u.account, u.password,
+      p.id as permission_id,
+      p.name as permission_name,
+      p.parent_id as permission_parent_id,
+      p.parent_name as permission_parent_name,
+      p.show_name as permission_show_name,
+      p.path as permission_path,
+      p.display as permission_display,
+      p.is_permission as permission_is_permission,
+      p.sort_order as permission_sort_order
+    from
+      auth_user u join auth_user_role ur on u.account = #{account,jdbcType=VARCHAR} and u.id = ur.user_id
+      join auth_role_permission rp on ur.role_id = rp.role_id
+      join auth_permission p on rp.permission_id = p.id
+    group by p.id
+  </select>
+
+
+  <select id="selectUserPermissionById" parameterType="java.lang.Long" resultMap="authUserPermission">
+    select u.id, u.name, u.account, u.password,
+    p.id as permission_id,
+    p.name as permission_name,
+    p.parent_id as permission_parent_id,
+    p.parent_name as permission_parent_name,
+    p.show_name as permission_show_name,
+    p.path as permission_path,
+    p.display as permission_display,
+    p.is_permission as permission_is_permission,
+    p.sort_order as permission_sort_order
+    from
+    auth_user u join auth_user_role ur on u.id = #{id,jdbcType=VARCHAR} and u.id = ur.user_id
+    join auth_role_permission rp on ur.role_id = rp.role_id
+    join auth_permission p on rp.permission_id = p.id
+    group by p.id
+  </select>
+
+
+</mapper>
