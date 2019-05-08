@@ -172,13 +172,13 @@ public class OauthClient extends AbstractHttpClientService {
         cli.resourceServerUrl = "http://127.0.0.1:8088";
         cli.init();
 
-        OAuth2TokenResult tokenRes = new OAuth2TokenResult(){
+        /*OAuth2TokenResult tokenRes = new OAuth2TokenResult(){
             {
                 setAccess_token("415ac9ea-3b93-41c6-8819-17c583c280d9");
             }
-        };
-//        OAuth2TokenResult tokenRes = cli.loginByPwd("ed", "1");
-        cli.implicit();
+        };*/
+        OAuth2TokenResult tokenRes = cli.loginByPwd("ed", "1");
+//        cli.implicit();
 //        OAuth2TokenResult tokenRes = cli.clientCredentials();
 
         //访问认证服务登陆：http://localhost:8081/auth/oauth/authorize?client_id=client1&redirect_uri=http://localhost:8082/ui/login&response_type=code

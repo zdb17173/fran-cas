@@ -6,6 +6,11 @@ server:
         name: UISESSION
     context-path: /ui
 
+fran:
+  oauth2:
+    server:
+      logout: http://127.0.0.1:8081/auth/exit
+
 security:
 #  basic:
 #    enabled: false

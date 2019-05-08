@@ -65,6 +65,8 @@ org.fran.microservice.cas.authclient.client 目录下提供了全套的基于客
 - 登陆成功后进入http://localhost:8082/ui/securedPage
 - 修改auth-sso的application.yaml中的端口配置，在启动一台8083端口的服务
 - 访问http://localhost:8083/ui/securedPage也可以免登陆访问
+- 访问http://localhost:8082/ui/logout 可以登出，返回200状态码
+
 
 ## auth-resource
 资源服务，实际业务的api等，通过http://127.0.0.1:8088访问

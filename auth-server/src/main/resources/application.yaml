@@ -11,6 +11,8 @@ fran:
             - "http://localhost:8083/ui/login"
             - "http://localhost:8082/ui/login"
             - "http://localhost:8082/ui2/login"
+            - "http://localhost:8083/login"
+            - "http://localhost:8082/login"
 
         - clientId: "client2"
           clientSecret: "client2secret"
